@@ -17,7 +17,7 @@ namespace SP_HW_Modul_04_cast__02
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Task2Form());
+            Application.Run(new MainForm());
         }
     }
 }
