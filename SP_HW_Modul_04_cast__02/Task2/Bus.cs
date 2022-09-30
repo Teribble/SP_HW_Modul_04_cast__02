@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace SP_HW_Modul_04_cast__02.Task2
@@ -8,7 +9,7 @@ namespace SP_HW_Modul_04_cast__02.Task2
         /// <summary>
         /// Возникает при заборе пассажир с остановки
         /// </summary>
-        public event Action<int, int> OnTake;
+        public event Action<List<Human>, int> OnTake;
 
         /// <summary>
         /// Возникает при заборе пассажир с остановки для уточнения, сколько именно пассажир на остановке
@@ -42,7 +43,7 @@ namespace SP_HW_Modul_04_cast__02.Task2
         /// <summary>
         /// Текущее кол-во пассажиров на остановке
         /// </summary>
-        private int _currentPassenger;
+        private List<Human> _currentPeople;
 
         private object _locker;
 
@@ -78,22 +79,19 @@ namespace SP_HW_Modul_04_cast__02.Task2
                 {
                     OnHowPeople();
 
-                    int buffer = 0;
+                    int _currentHumansInBus = new Random().Next(0, Capasity);
 
-                    if (_currentPassenger > Capasity)
+                    List<Human> list = new List<Human>();
+
+                    foreach (var people in _currentPeople)
                     {
-                        buffer = Capasity;
-                    }
-                    else if (_currentPassenger < Capasity)
-                    {
-                        buffer = _currentPassenger;
-                    }
-                    else
-                    {
-                        buffer = 0;
+                        if (people.PreferredNumber == NumberBus && list.Count <= (Capasity - _currentHumansInBus))
+                        {
+                            list.Add(people);
+                        }
                     }
 
-                    OnTake(buffer, NumberBus);
+                    OnTake(list, NumberBus);
 
                     Thread.Sleep(_second);
                 }
@@ -104,9 +102,9 @@ namespace SP_HW_Modul_04_cast__02.Task2
         /// Сколько пассажиров на остновке
         /// </summary>
         /// <param name="number"></param>
-        public void HowCurrentPeople(int number)
+        public void HowCurrentPeople(List<Human> people)
         {
-            _currentPassenger = number;
+            _currentPeople = people;
         }
 
         /// <summary>

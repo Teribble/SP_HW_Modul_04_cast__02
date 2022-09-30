@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 
-///РАЗОБРАТЬСЯ ПОЧЕМУ ПОСЛЕ ДОБАВЛЕНИЯ АВТОБУСА, ИЗ-ЗА НОВОГО ПОТОКА ПРЕДЫДУЩИЙ ОТРАБАТЫВАЕТ ДВА РАЗА
-
 namespace SP_HW_Modul_04_cast__02.Task2
 {
     public class BusStation
@@ -16,14 +14,11 @@ namespace SP_HW_Modul_04_cast__02.Task2
         /// <summary>
         /// Событие, возникающее при изменении конекретного количества людей
         /// </summary>
-        public event Action<int> OnCurrentPeople;
+        public event Action<List<Human>> OnCurrentPeople;
 
-        public event Action<int> OnClarification;
+        public event Action<List<Human>> OnClarification;
+
         private object _locker;
-        /// <summary>
-        /// Конкретное количество людей
-        /// </summary>
-        private int _currentPeople;
 
         /// <summary>
         /// Автобусная остановка
@@ -31,49 +26,46 @@ namespace SP_HW_Modul_04_cast__02.Task2
         public BusStation()
         {
             _locker = new object();
+
+            CurrentPeople = new List<Human>();
         }
         /// <summary>
         /// Конкретное количество людей
         /// </summary>
-        public int CurrentPeople
-        {
-            get
-            {
-                return _currentPeople;
-            }
-
-            set
-            {
-                _currentPeople = value;
-            }
-        }
+        public List<Human> CurrentPeople;
         /// <summary>
         /// Приходящие люди
         /// </summary>
         /// <param name="number">Кол-во людей, которые пришли на остановку</param>
-        public void NewCurrentPeople(int number)
+        public void NewCurrentPeople(List<Human> people)
         {
-            CurrentPeople += number;
+            lock (_locker)
+            {
+                CurrentPeople.AddRange(people);
 
-            OnCurrentPeople(CurrentPeople);
+                OnCurrentPeople(CurrentPeople);
+            }
         }
         /// <summary>
         /// Уточнение сколько людей по факту стоит на остановке
         /// </summary>
         public void Clarification()
         {
-            OnClarification(_currentPeople);
+            OnClarification(CurrentPeople);
         }
         /// <summary>
         /// Автобус забрал людей
         /// </summary>
         /// <param name="number">Сколько людей забрал</param>
         /// <param name="BusNumber">Номер автобуса</param>
-        public void TakeBus(int number, int BusNumber)
+        public void TakeBus(List<Human> people, int BusNumber)
         {
-            CurrentPeople -= number;
+            lock (_locker)
+            {
+                CurrentPeople.RemoveAll(n => n.PreferredNumber == BusNumber);
 
-            OnCurrentPeople(CurrentPeople);
+                OnCurrentPeople(CurrentPeople);
+            }
         }
     }
 }

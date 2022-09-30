@@ -66,6 +66,7 @@
     <Compile Include="Task2\Bus.cs" />
     <Compile Include="Task2\BusStation.cs" />
     <Compile Include="Task2\Passenger.cs" />
+    <Compile Include="Task2\People.cs" />
     <Compile Include="Task2\Task2.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -102,6 +103,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Task2\ПОЯСНЕНИЕ.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

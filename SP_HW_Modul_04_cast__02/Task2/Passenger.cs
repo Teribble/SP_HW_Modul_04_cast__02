@@ -13,7 +13,7 @@ namespace SP_HW_Modul_04_cast__02.Task2
         /// <summary>
         /// Событие, возникает при новой волне людей
         /// </summary>
-        public event Action<int> OnGenerate;
+        public event Action<List<Human>> OnGenerate;
         // Время, через которое будут приходить новые люди
         private int _second;
 
@@ -24,6 +24,8 @@ namespace SP_HW_Modul_04_cast__02.Task2
 
         // Поток
         private Thread _thread;
+
+        private object _locker;
 
         /// <summary>
         /// Пассажир
@@ -36,6 +38,8 @@ namespace SP_HW_Modul_04_cast__02.Task2
             _isGenerate = false;
 
             _thread = new Thread(Gen);
+
+            _locker = new object();
         }
         /// <summary>
         /// Запустить поток людей
@@ -51,11 +55,21 @@ namespace SP_HW_Modul_04_cast__02.Task2
         {
             while (_isGenerate)
             {
-                var buffer = new Random().Next(0, 100);
+                lock (_locker)
+                {
+                    var buffer = new Random().Next(0, 100);
 
-                OnGenerate(buffer);
+                    List<Human> people = new List<Human>();
 
-                Thread.Sleep(_second);
+                    for (int i = 0; i < buffer; i++)
+                    {
+                        people.Add(new Human());
+                    }
+
+                    OnGenerate(people);
+
+                    Thread.Sleep(_second);
+                }
             }
         }
         /// <summary>
